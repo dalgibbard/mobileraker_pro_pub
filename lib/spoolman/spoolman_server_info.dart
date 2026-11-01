@@ -23,7 +23,7 @@ part 'spoolman_server_info.g.dart';
 }
  */
 @freezed
-class SpoolmanServerInfo with _$SpoolmanServerInfo {
+sealed class SpoolmanServerInfo with _$SpoolmanServerInfo {
   const SpoolmanServerInfo._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

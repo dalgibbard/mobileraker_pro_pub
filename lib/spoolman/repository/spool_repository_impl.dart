@@ -1,45 +1,41 @@
-/*
- * Copyright (c) 2023-2024. Patrick Schmidt.
- * All rights reserved.
- */
-
+import 'package:flutter/foundation.dart';
 import 'package:common/data/dto/pagination_result.dart';
 import 'package:common/network/json_rpc_client.dart';
 import 'package:common/util/logger.dart';
-import 'package:mobileraker_pro/spoolman/dto/spool.dart';
 
+import '../dto/spool.dart';
 import 'spool_repository.dart';
 
-class SpoolRepositoryImpl with SpoolRepository {
-  SpoolRepositoryImpl(JsonRpcClient jsonRpcClient, bool useV2Proxy);
+class GetSpoolRepositoryImpl with GetSpoolRepository {
+  GetSpoolRepositoryImpl(JsonRpcClient jsonRpcClient, bool useV2Proxy);
 
   @override
-  Future<Spool> create(Spool spool) {
-    logger.i('Creating spool: $spool');
+  Future<GetSpool> create(GetSpool spool) {
+    debugPrint('Creating spool: ${spool}');
     return Future.value(spool);
   }
 
   @override
-  Future<Spool> delete(Spool spool) {
-    logger.i('Deleting spool: $spool');
+  Future<GetSpool> delete(GetSpool spool) {
+    debugPrint('Deleting spool: ${spool}');
     return Future.value(spool);
   }
 
   @override
-  Future<PaginationResult<Spool>> paginated({int? pageSize, int? page, Map<String, dynamic>? filters}) {
-    logger.i('Fetching paginated spools');
-    return Future.value(PaginationResult<Spool>([], 0, 0, 0));
+  Future<PaginationResult<GetSpool>> paginated({int? pageSize, int? page, Map<String, dynamic>? filters}) {
+    debugPrint('Fetching paginated spools');
+    return Future.value(PaginationResult<GetSpool>(const <GetSpool>[], 0, 0, 0));
   }
 
   @override
-  Future<Spool?> read(int id) {
-    logger.i('Reading spool with id: $id');
+  Future<GetSpool?> read(int id) {
+    debugPrint('Reading spool with id: $id');
     return Future.value(null);
   }
 
   @override
-  Future<Spool> update(Spool spool) {
-    logger.i('Updating spool: $spool');
+  Future<GetSpool> update(GetSpool spool) {
+    debugPrint('Updating spool: ${spool}');
     return Future.value(spool);
   }
 }

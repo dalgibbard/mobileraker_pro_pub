@@ -1,8 +1,4 @@
-/*
- * Copyright (c) 2023-2024. Patrick Schmidt.
- * All rights reserved.
- */
-
+import 'package:flutter/foundation.dart';
 import 'package:common/data/dto/pagination_result.dart';
 import 'package:common/network/jrpc_client_provider.dart';
 import 'package:common/service/moonraker/klippy_service.dart';
@@ -16,28 +12,25 @@ import 'spool_repository_impl.dart';
 part 'spool_repository.g.dart';
 
 @riverpod
-SpoolRepository spoolRepository(SpoolRepositoryRef ref, String machineUUID) {
+GetSpoolRepository spoolRepository(Ref ref, String machineUUID) {
   var jsonRpcClient = ref.watch(jrpcClientProvider(machineUUID));
 
-  var moonrakerVersion = ref.watch(klipperProvider(machineUUID).selectAs((data) => data.moonrakerVersion)).valueOrNull;
-  // Prior to v0.8.0-331, there was no counts in the V2 response, but V2 was available. However, we will start using V2 from v0.8.0-331
-  // V1/V2 explained: https://moonraker.readthedocs.io/en/latest/web_api/?h=proxy#proxy
-  // Commit adding counts/headers: https://github.com/Arksine/moonraker/commit/c857e1a99f76777a3247bc47bfe5a5fceeaad947
+  var moonrakerVersion = ref.watch(klipperProvider(machineUUID).selectAs((data) => data.moonrakerVersion)).value;
   var useV2 = (moonrakerVersion?.compareTo(0, 8, 0, 331) ?? -1) >= 0;
 
-  logger.i('Instantiating SpoolRepository with Moonraker-Response-Version: ${useV2 ? 'V2' : 'V1'}');
+  debugPrint('Instantiating GetSpoolRepository with Moonraker-Response-Version: ${useV2 ? 'V2' : 'V1'}');
 
-  return SpoolRepositoryImpl(jsonRpcClient, useV2);
+  return GetSpoolRepositoryImpl(jsonRpcClient, useV2);
 }
 
-abstract mixin class SpoolRepository {
-  Future<Spool> create(Spool spool);
+abstract mixin class GetSpoolRepository {
+  Future<GetSpool> create(GetSpool spool);
 
-  Future<Spool?> read(int id);
+  Future<GetSpool?> read(int id);
 
-  Future<Spool> update(Spool spool);
+  Future<GetSpool> update(GetSpool spool);
 
-  Future<Spool> delete(Spool spool);
+  Future<GetSpool> delete(GetSpool spool);
 
-  Future<PaginationResult<Spool>> paginated({int? pageSize, int? page, Map<String, dynamic>? filters});
+  Future<PaginationResult<GetSpool>> paginated({int? pageSize, int? page, Map<String, dynamic>? filters});
 }

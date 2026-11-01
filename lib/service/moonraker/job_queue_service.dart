@@ -3,6 +3,7 @@
  * All rights reserved.
  */
 
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 
 import 'package:common/data/dto/job_queue/job_queue_event.dart';
@@ -21,28 +22,28 @@ import 'package:rxdart/rxdart.dart';
 part 'job_queue_service.g.dart';
 
 @riverpod
-JobQueueService jobQueueService(JobQueueServiceRef ref, String machineUUID) {
+JobQueueService jobQueueService(Ref ref, String machineUUID) {
   return JobQueueService(ref, machineUUID);
 }
 
 @riverpod
-Stream<JobQueueStatus> jobQueue(JobQueueRef ref, String machineUUID) async* {
+Stream<JobQueueStatus> jobQueue(Ref ref, String machineUUID) async* {
   ref.keepAlive();
   yield JobQueueStatus(queueState: QueueState.paused);
 }
 
 @riverpod
-JobQueueService jobQueueServiceSelected(JobQueueServiceSelectedRef ref) {
-  return ref.watch(jobQueueServiceProvider(ref.watch(selectedMachineProvider).valueOrNull!.uuid));
+JobQueueService jobQueueServiceSelected(Ref ref) {
+  return ref.watch(jobQueueServiceProvider(ref.watch(selectedMachineProvider).value!.uuid));
 }
 
 @riverpod
-Stream<JobQueueStatus> jobQueueSelected(JobQueueSelectedRef ref) async* {
+Stream<JobQueueStatus> jobQueueSelected(Ref ref) async* {
   try {
     var machine = await ref.watch(selectedMachineProvider.future);
     if (machine == null) return;
 
-    yield* ref.watchAsSubject(jobQueueProvider(machine.uuid));
+    yield* ref.watch(jobQueueProvider(machine.uuid).future).asStream();
   } on StateError catch (_) {
     // Just catch it. It is expected that the future/where might not complete!
   }
@@ -52,44 +53,44 @@ Stream<JobQueueStatus> jobQueueSelected(JobQueueSelectedRef ref) async* {
 /// For more information check out
 /// 1. https://moonraker.readthedocs.io/en/latest/web_api/#job-queue-apis
 class JobQueueService {
-  JobQueueService(AutoDisposeRef ref, String machineUUID);
+  JobQueueService(Ref ref, String machineUUID);
 
 
   Stream<JobQueueEvent> get queueChagendEventStream => Stream.empty();
 
 
   Future<JobQueueStatus> queueStatus() async {
-    logger.i('Queue status request...');
+    debugPrint('Queue status request...');
     return JobQueueStatus(queueState: QueueState.ready);
   }
 
   Future<JobQueueStatus> enqueueJobs(List<String> files, [bool reset = false]) async {
-    logger.i('Trying to enqueue files $files...');
+    debugPrint('Trying to enqueue files $files...');
     return JobQueueStatus(queueState: QueueState.ready);
   }
 
   Future<JobQueueStatus> enqueueJob(String file, [bool reset = false]) async {
-    logger.i('Trying to enqueue file $file...');
+    debugPrint('Trying to enqueue file $file...');
     return enqueueJobs([file], reset);
   }
 
   Future<JobQueueStatus> dequeueJobs(List<String> jobIds) async {
-    logger.i('Trying to dequeue files $jobIds...');
+    debugPrint('Trying to dequeue files $jobIds...');
     return JobQueueStatus(queueState: QueueState.ready);
   }
 
   Future<JobQueueStatus> dequeueJob(String jobId) async {
-    logger.i('Trying to enqueue file $jobId...');
+    debugPrint('Trying to enqueue file $jobId...');
     return dequeueJobs([jobId]);
   }
 
   Future<JobQueueStatus> pauseQueue() async {
-    logger.i('Trying to pause queue...');
+    debugPrint('Trying to pause queue...');
    return JobQueueStatus(queueState: QueueState.paused);
   }
 
   Future<JobQueueStatus> startQueue() async {
-    logger.i('Trying to start queue...');
+    debugPrint('Trying to start queue...');
     return JobQueueStatus(queueState: QueueState.starting);
   }
 }

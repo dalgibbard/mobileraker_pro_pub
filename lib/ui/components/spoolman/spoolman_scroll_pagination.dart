@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobileraker_pro/spoolman/dto/spoolman_dto_mixin.dart';
+import 'package:mobileraker_pro/spoolman/dto/spoolman_filter.dart';
 
 enum SpoolmanListType {
   spools,
@@ -34,7 +35,10 @@ class SpoolmanScrollPagination extends ConsumerStatefulWidget {
     this.physics,
     this.padding,
     this.onEntryTap,
+    this.filters,
   });
+
+  final SpoolmanFilter? filters;
 
   final SpoolmanListType type;
 

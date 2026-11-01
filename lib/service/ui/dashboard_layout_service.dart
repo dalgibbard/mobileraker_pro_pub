@@ -8,53 +8,61 @@ import 'package:common/data/model/hive/dashboard_component_type.dart';
 import 'package:common/data/model/hive/dashboard_layout.dart';
 import 'package:common/data/model/hive/dashboard_tab.dart';
 import 'package:common/data/model/hive/machine.dart';
-import 'package:common/util/logger.dart';
+import 'package:logger/logger.dart';
+import 'package:uuid/uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dashboard_layout_service.g.dart';
 
 @riverpod
-Future<DashboardLayout> dashboardLayout(DashboardLayoutRef ref, String machineUUID) async {
+Future<DashboardLayout> dashboardLayout(Ref ref, String machineUUID) async {
   return ref.watch(dashboardLayoutServiceProvider).defaultDashboardLayout();
 }
 
 @riverpod
-DashboardLayoutService dashboardLayoutService(DashboardLayoutServiceRef ref) {
+Future<DashboardLayout> dashboardLayoutForMachine(Ref ref, String machineUUID) async {
+  return ref.watch(dashboardLayoutServiceProvider).defaultDashboardLayout();
+}
+
+@riverpod
+DashboardLayoutService dashboardLayoutService(Ref ref) {
   ref.keepAlive();
   return DashboardLayoutService(ref);
 }
 
 class DashboardLayoutService {
-  DashboardLayoutService(DashboardLayoutServiceRef ref) {
+  final Logger logger = Logger();
+
+  DashboardLayoutService(Ref ref) {
     ref.onDispose(dispose);
   }
 
   /// Returns the default dashboard layout. Defined by me
   DashboardLayout defaultDashboardLayout() {
-    return DashboardLayout(name: 'Default', tabs: [
-      DashboardTab(name: 'General', icon: 'nozzle', components: [
-        DashboardComponent(type: DashboardComponentType.machineStatus),
-        DashboardComponent(type: DashboardComponentType.temperatureSensorPreset),
-        DashboardComponent(type: DashboardComponentType.webcam),
-        DashboardComponent(type: DashboardComponentType.controlXYZ),
-        DashboardComponent(type: DashboardComponentType.zOffset),
-        DashboardComponent(type: DashboardComponentType.spoolman),
+    return DashboardLayout(uuid: const Uuid().v4(), name: 'Default', tabs: [
+      DashboardTab(uuid: const Uuid().v4(), name: 'General', icon: 'nozzle', components: [
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.machineStatus),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.temperatureSensorPreset),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.webcam),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.controlXYZ),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.zOffset),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.spoolman),
       ]),
-      DashboardTab(name: 'Control', icon: 'sliders', components: [
-        DashboardComponent(type: DashboardComponentType.macroGroup),
-        DashboardComponent(type: DashboardComponentType.controlExtruder),
-        DashboardComponent(type: DashboardComponentType.fans),
-        DashboardComponent(type: DashboardComponentType.pins),
-        DashboardComponent(type: DashboardComponentType.powerApi),
-        DashboardComponent(type: DashboardComponentType.groupedSliders),
-        DashboardComponent(type: DashboardComponentType.bedMesh),
+      DashboardTab(uuid: const Uuid().v4(), name: 'Control', icon: 'sliders', components: [
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.macroGroup),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.controlExtruder),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.fans),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.pins),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.powerApi),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.groupedSliders),
+        DashboardComponent(uuid: const Uuid().v4(), type: DashboardComponentType.bedMesh),
       ]),
     ]);
   }
 
   /// Returns an empty dashboard layout with one empty tab
   DashboardLayout emptyDashboardLayout() {
-    return DashboardLayout(name: 'Empty', tabs: [
+    return DashboardLayout(uuid: const Uuid().v4(), name: 'Empty', tabs: [
       emptyDashboardTab('nozzle'),
       emptyDashboardTab('sliders'),
     ]);
@@ -62,7 +70,7 @@ class DashboardLayoutService {
 
   /// Returns an empty dashboard tab
   DashboardTab emptyDashboardTab([String icon = 'nozzle']) {
-    return DashboardTab(name: 'Empty', icon: icon, components: []);
+    return DashboardTab(uuid: const Uuid().v4(), name: 'Empty', icon: icon, components: []);
   }
 
   DashboardLayout importFromJson(Map<String, dynamic> json) {

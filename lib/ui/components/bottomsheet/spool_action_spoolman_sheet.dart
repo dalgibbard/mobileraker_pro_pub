@@ -13,7 +13,7 @@ class SpoolActionSpoolmanSheet extends ConsumerWidget {
   const SpoolActionSpoolmanSheet({super.key, required this.machineUUID, required this.spool});
 
   final String machineUUID;
-  final Spool spool;
+  final GetSpool spool;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
